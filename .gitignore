@@ -1,6 +1,7 @@
 *.class
+*~
+javadoc/
 
 # Package Files #
-*.jar
 *.war
 *.ear
