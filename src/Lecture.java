@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -7,10 +8,9 @@ import java.util.ArrayList;
  * @version 1.2.1
  */
 
-public class Lecture {
-	private String courseAbbr, courseName, status, enrollCode, instructor, days, time;
-	private String location, fullTitle, description, preReq, college, units, grading;
-	private int enrolledCount, enrolledMax;
+public class Lecture extends UCSBClass implements Serializable {
+	private static final long serialVersionUID = -1176285613677203485L;
+	private String courseAbbr, courseName, fullTitle, description, preReq, college, units, grading;
 	public List<Section> sections = new ArrayList<Section>();
 	
 	/**The No argument constructor.
@@ -38,79 +38,6 @@ public class Lecture {
 		this.courseName = theCourseName;
 	}
 	
-	/**This sets the <code>status</code> variable.
-	 * 
-	 * @param theStatus a string that represents the status of the course.
-	 */
-	public void setStatus(String theStatus) {
-		this.status = theStatus;
-	}
-	
-	/**This sets the <code>enrollCode</code> variable.
-	 * 
-	 * @param theEnrollCode a string that represents the Enroll Code of the course.
-	 */
-	public void setEnrollCode(String theEnrollCode) {
-		this.enrollCode = theEnrollCode;
-	}
-	
-	/**This sets the <code>instructor</code> variable.
-	 * 
-	 * @param theInstructor a string that represents the name of the Instructor.
-	 */
-	public void setInstructor(String theInstructor) {
-		this.instructor = theInstructor;
-	}
-	
-	/**This sets the <code>days</code> variable.
-	 * 
-	 * @param theDays a string that represents the days the course meets.
-	 */
-	public void setDays(String theDays) {
-		this.days = theDays;
-	}
-	
-	/**This sets the <code>time</code> variable.
-	 * 
-	 * @param theTime a string that represents the beginning and ending time of the Lecture.
-	 */
-	public void setTime(String theTime) {
-		this.time = theTime;
-	}
-	
-	/**This sets the <code>location</code> variable.
-	 * 
-	 * @param theLocation a string that represents where the Lecture is held.
-	 */
-	public void setLocation(String theLocation) {
-		this.location = theLocation;
-	}
-	
-	/**This sets the <code>enrolledCount</code> variable.
-	 * 
-	 * @param theEnRolledCount a string that represents the number of people currently enrolled.
-	 */
-	public void setEnrolledCount (int theEnRolledCount) {
-		this.enrolledCount = theEnRolledCount;
-	}
-	
-	/**This sets the <code>enrolledMax</code> variable.
-	 * 
-	 * @param theEnRolledMax a string that represents the maximum number of possible people enrolled.
-	 */
-	public void setEnrolledMax (int theEnRolledMax) {
-		this.enrolledMax = theEnRolledMax;
-	}
-	
-	/**This sets the both the <code>enrolledCount</code> and the <code>enrolledMax</code> variables.
-	 * 
-	 * @param theEnRolled a string of the form <code>46/75</code> that is split to set the count and max.
-	 */
-	public void setEnrolled(String theEnRolled) {
-		String [] temp = theEnRolled.replaceAll("\\s", "").split("/");
-		this.enrolledCount = Integer.parseInt(temp[0]);
-		this.enrolledMax = Integer.parseInt(temp[1]);
-	}
 	
 	/**This sets the <code>fullTitle</code> variable.
 	 * 
@@ -175,66 +102,7 @@ public class Lecture {
 	 */
 	public String getCourseName() { return this.courseName; }
 	
-	/**Returns the <code>status</code> instance variable.
-	 * 
-	 * @return String representation of the <code>status</code> variable.
-	 * Returns <code>""</code> if it was never set
-	 */
-	public String getStatus() { return this.status; }
 	
-	/**Returns the <code>enrollCode</code> instance variable.
-	 * 
-	 * @return String representation of the <code>enrollCode</code> variable.
-	 * Returns <code>""</code> if it was never set
-	 */
-	public String getEnrollCode() { return this.enrollCode; }
-	
-	/**Returns the <code>instructor</code> instance variable.
-	 * 
-	 * @return String representation of the <code>instructor</code> variable.
-	 * Returns <code>""</code> if it was never set
-	 */
-	public String getInstructor() { return this.instructor; }
-	
-	/**Returns the <code>days</code> instance variable.
-	 * 
-	 * @return String representation of the <code>days</code> variable.
-	 * Returns <code>""</code> if it was never set
-	 */
-	public String getDays() { return this.days; }
-	
-	/**Returns the <code>time</code> instance variable.
-	 * 
-	 * @return String representation of the <code>time</code> variable.
-	 * Returns <code>""</code> if it was never set
-	 */
-	public String getTime() { return this.time; }
-	
-	/**Returns the <code>location</code> instance variable.
-	 * 
-	 * @return String representation of the <code>location</code> variable.
-	 * Returns <code>""</code> if it was never set
-	 */
-	public String getLocation() { return this.location; }
-	
-	/**Returns the <code>enrolledCount</code> instance variable.
-	 * 
-	 * @return int representation of the <code>enrolledCount</code> variable.
-	 */
-	public int getEnrolledCount() { return this.enrolledCount; }
-	
-	/**Returns the <code>enrolledMax</code> instance variable.
-	 * 
-	 * @return int representation of the <code>enrolledMax</code> variable.
-	 */
-	public int getEnrolledMax() { return this.enrolledMax; }
-	
-	/**Returns the <code>enrolled</code> instance variable.
-	 * 
-	 * @return String representation of the <code>enrolled</code> variable.
-	 * Returns <code>""</code> if it was never set
-	 */
-	public String getEnrolled() {return "" + this.enrolledCount + " / " + this.enrolledMax;}
 	
 	/**Returns the <code>fullTitle</code> instance variable.
 	 * 
@@ -292,14 +160,14 @@ public class Lecture {
         			+ 	"College:			" + this.college + "\n"
         			+	"Units:				" + this.units + "\n"
         			+	"Grading:			" + this.grading + "\n"
-        			+ 	"Lecture Status:			" + this.status + "\n"
-        			+ 	"Enroll Code:			" + this.enrollCode + "\n"	
-        			+ 	"Instructor:			" + this.instructor + "\n"
-                	+ 	"Lecture Days:			" + this.days + "\n"
-                	+	"Lecture Time:			" + this.time + "\n"
-                	+ 	"Lecture Location:		" + this.location + "\n"
-                	+ 	"Enrolled Count:			" + this.enrolledCount + "\n"
-        			+ 	"Enrolled Max:			" + this.enrolledMax + "\n\n";
+        			+ 	"Lecture Status:			" + this.getStatus() + "\n"
+        			+ 	"Enroll Code:			" + this.getEnrollCode() + "\n"	
+        			+ 	"Instructor:			" + this.getInstructor() + "\n"
+                	+ 	"Lecture Days:			" + this.getDays() + "\n"
+                	+	"Lecture Time:			" + this.getTime() + "\n"
+                	+ 	"Lecture Location:		" + this.getLocation() + "\n"
+                	+ 	"Enrolled Count:			" + this.getEnrolledCount() + "\n"
+        			+ 	"Enrolled Max:			" + this.getEnrolledMax() + "\n\n";
         if (!(sections.size() == (0))) {
         	result += "Sections\n--------\n";
         	for (int i = 0; i < this.sections.size(); i++) {

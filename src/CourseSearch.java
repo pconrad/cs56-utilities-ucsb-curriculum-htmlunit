@@ -198,9 +198,10 @@ public class CourseSearch {
 	 * @return an ArrayList of all available Course options.
 	 * @throws IOException
 	 */
-	public List<String> getCourseOptions() throws IOException {
+	public List<String> getCourseOptions() {
 		if (this.loadClassList()) {
 			try {
+				courseOptions.clear();
 				courses = page.getElementsByIdAndOrName("CourseTitle");
 				DomElement courseName;
 				int increment = 2;
@@ -246,7 +247,7 @@ public class CourseSearch {
 	 * @return an ArrayList of all available Department options
 	 * @throws IOException
 	 */
-	public List<String> getDeptOptions() throws IOException {
+	public List<String> getDeptOptions() {
         try {
         	page = webClient.getPage(url);
         	
@@ -271,7 +272,7 @@ public class CourseSearch {
 	 * @return an ArrayList of all available GradLevel options
 	 * @throws IOException
 	 */
-	public List<String> getGradLevelOptions() throws IOException { 
+	public List<String> getGradLevelOptions() { 
         try {
         	page = webClient.getPage(url);
         	
@@ -296,7 +297,7 @@ public class CourseSearch {
 	 * @return an ArrayList of all available Quarter options.
 	 * @throws IOException
 	 */
-	public List<String> getQuarterOptions() throws IOException {
+	public List<String> getQuarterOptions() {
         try {
         	page = webClient.getPage(url);
         	
@@ -324,7 +325,7 @@ public class CourseSearch {
 	 * @return false is something went wrong
 	 * @throws IOException
 	 */
-	private boolean loadClassList() throws IOException {
+	private boolean loadClassList() {
 		if (this.dept.equals("") || this.quarter.equals("") || this.gradLevel.equals("")) {
 			return false;
 		}
@@ -502,7 +503,7 @@ public class CourseSearch {
 	 * @param args
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		Scanner ans = new Scanner(System.in);
 		CourseSearch test = new CourseSearch();
 		
