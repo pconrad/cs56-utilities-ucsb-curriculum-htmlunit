@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -33,8 +35,8 @@ public class CourseSearchGui {
 	private CourseSearch guiCourseSearch;
 	Lecture lect;
 	private JFrame frame;
-	private JPanel savePanel, searchPanel, resultsPanel, sendPanel, receivePanel;
-	private JButton save, load, search, send, receive;
+	private JPanel savePanel, searchPanel, resultsPanel;//, sendPanel, receivePanel;
+	private JButton save, load, search;//, send, receive;
 	
 	public CourseSearchGui() {
 		guiCourseSearch = new CourseSearch();
@@ -59,20 +61,20 @@ public class CourseSearchGui {
 		save = new JButton("Save");
 		load = new JButton("Load");
 		search = new JButton("Search");
-		send = new JButton("Send");
-		receive = new JButton("Receive");
+		//send = new JButton("Send");
+		//receive = new JButton("Receive");
 		
 		save.addActionListener(new saveButtonListener());
 		load.addActionListener(new loadButtonListener());
 		search.addActionListener(new searchButtonListener());
-		send.addActionListener(new sendButtonListener());
-		receive.addActionListener(new receiveButtonListener());
+		//send.addActionListener(new sendButtonListener());
+		//receive.addActionListener(new receiveButtonListener());
 		
 		savePanel.add(save);
 		savePanel.add(load);
 		savePanel.add(search);
-		savePanel.add(send);
-		savePanel.add(receive);
+		//savePanel.add(send);
+		//savePanel.add(receive);
 		frame.getContentPane().add(savePanel);
 		frame.revalidate();
 	}
@@ -81,8 +83,8 @@ public class CourseSearchGui {
 		save.setEnabled(false);
 		load.setEnabled(true);
 		search.setEnabled(false);
-		send.setEnabled(true);
-		receive.setEnabled(true);
+		//send.setEnabled(true);
+		//receive.setEnabled(true);
 		
 		searchPanel = new JPanel();
 		searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
@@ -119,8 +121,8 @@ public class CourseSearchGui {
 		save.setEnabled(true);
 		load.setEnabled(true);
 		search.setEnabled(true);
-		send.setEnabled(true);
-		receive.setEnabled(true);
+		//send.setEnabled(true);
+		//receive.setEnabled(true);
 		
 		resultsPanel = new JPanel();
 		resultsPanel.setLayout(new FlowLayout(FlowLayout.LEFT,20,10));
@@ -364,6 +366,7 @@ public class CourseSearchGui {
 	private class dropDownDeptListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			@SuppressWarnings("unchecked")
 			String optionSelect = (String) ((JComboBox<String>)e.getSource()).getSelectedItem();
 			guiCourseSearch.setDept(optionSelect);
 			
@@ -374,6 +377,7 @@ public class CourseSearchGui {
 	private class dropDownQuarterListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			@SuppressWarnings("unchecked")
 			String optionSelect = (String) ((JComboBox<String>)e.getSource()).getSelectedItem();
 			guiCourseSearch.setQuarter(optionSelect);
 			
@@ -384,6 +388,7 @@ public class CourseSearchGui {
 	private class dropDownGradLevelListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			@SuppressWarnings("unchecked")
 			String optionSelect = (String) ((JComboBox<String>)e.getSource()).getSelectedItem();
 			guiCourseSearch.setGradLevel(optionSelect);
 			
@@ -394,6 +399,7 @@ public class CourseSearchGui {
 	private class dropDownCourseListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			@SuppressWarnings("unchecked")
 			String optionSelect = (String) ((JComboBox<String>)e.getSource()).getSelectedItem();
 			guiCourseSearch.setCourse(optionSelect);
 		}
@@ -485,21 +491,86 @@ public class CourseSearchGui {
 		}
 	}
 	
+	/* Can't test this - can't find an open server port
+	 * 
+	 * 
 	private class sendButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
+			SendReceiveLecture srl = new SendReceiveLecture();
+			srl.setServerPort(25536);
+			srl.send();
 		}
 	}
 	
 	private class receiveButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
+			SendReceiveLecture srl = new SendReceiveLecture();
+			srl.setServerPort(25536);
+			srl.receive();
+			frame.getContentPane().remove(1);
+			buildResultsGui(lect);
 		}
 	}
+	
+	public class SendReceiveLecture {
+		int serverPort;
+		
+		public void setServerPort(int theServerPort) {
+			this.serverPort = theServerPort;
+		}
+		
+		public class ClientHandler implements Runnable {
+			ObjectInputStream inputStream;
+			Socket clientSocket;
+			public ClientHandler() {
+				try {
+					ServerSocket serverSock = new ServerSocket(serverPort);
+					clientSocket = serverSock.accept();
+					inputStream = new ObjectInputStream(clientSocket.getInputStream());
+					clientSocket.close();
+					serverSock.close();
+				} catch (IOException e) {
+					e.printStackTrace(); 
+					System.exit(0);
+				}
+			}
+			
+			@Override
+			public void run() {
+				Lecture tempLect;
+				try {
+					while ((tempLect = (Lecture) inputStream.readObject()) != null) {
+						lect = tempLect;
+					}
+				} catch (Exception ex) { ex.printStackTrace(); }
+			}
+		}
+		
+		public void receive() {
+			while (true) {
+				Thread t = new Thread(new ClientHandler());
+				t.start();
+			}
+		}
+		
+		public void send() {
+			try {
+				ServerSocket serverSock = new ServerSocket(serverPort);
+				Socket clientSocket = serverSock.accept();
+				ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+				outputStream.writeObject(lect);
+				outputStream.close();
+				clientSocket.close();
+				serverSock.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.exit(0);
+			}
+		}
+	}
+	*/
 	
 	public static void main(String [] args) {
 		CourseSearchGui gui = new CourseSearchGui();
