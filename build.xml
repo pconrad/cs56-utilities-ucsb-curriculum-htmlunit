@@ -26,7 +26,7 @@
   </target>
 
   <target name="run" depends="compile" description="search for courses">
-    <java classname="CourseSearchGUI">
+    <java classname="CourseSearchGui" fork="true">
       <classpath refid="LibraryJars" />
     </java>
   </target>
