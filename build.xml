@@ -26,10 +26,29 @@
   </target>
 
   <target name="run" depends="compile" description="search for courses">
+    <java classname="CourseSearch" fork="true">
+      <classpath refid="LibraryJars" />
+    </java>
+  </target>
+
+  <target name="gui" depends="compile" description="gui search for courses">
     <java classname="CourseSearchGui" fork="true">
       <classpath refid="LibraryJars" />
     </java>
   </target>
+
+  <target name="isis" depends="compile" description="isis cli">
+    <java classname="IsisScrape" fork="true">
+      <classpath refid="LibraryJars" />
+    </java>
+  </target>
+
+ <target name="isisgui" depends="compile" description="isis gui">
+    <java classname="IsisScrapeGui" fork="true">
+      <classpath refid="LibraryJars" />
+    </java>
+  </target>
+
 
   <target name="clean" description="delete unnecessary files and directories">
     <delete dir="build" quiet="true" />
