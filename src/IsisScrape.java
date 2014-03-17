@@ -39,6 +39,8 @@ public class IsisScrape {
     private String username;
     private String password;
 
+    public boolean debug=false;
+
 
     /** setter */
 
@@ -86,9 +88,10 @@ public class IsisScrape {
 	    theElement = (HtmlElement) this.page.getElementById("cphMain_btnLogin");               
 	    this.page = theElement.click();
 
-	    System.out.println("page = " + this.page);
-	    System.out.println("page = " + this.page.asXml());
-
+	    if (debug) {
+		System.out.println("page = " + this.page);
+		System.out.println("page = " + this.page.asXml());
+	    }
 	    clickHiddenSubmit();
 
 	} catch (FailingHttpStatusCodeException e) {
@@ -132,10 +135,10 @@ public class IsisScrape {
 
 	    this.page = hiddenSubmit.click();
 
-
-	    System.out.println("In " + mname + " page after click = " + this.page);
-	    System.out.println("In " + mname + " page after click = " + this.page.asXml());
-
+	    if (debug) {
+		System.out.println("In " + mname + " page after click = " + this.page);
+		System.out.println("In " + mname + " page after click = " + this.page.asXml());
+	    }
 	} catch (FailingHttpStatusCodeException e) {
 	    System.out.println("FailingHttpStatusCodeException during " + mname + " " + e.getMessage());
 	} catch (MalformedURLException e) {
@@ -175,9 +178,10 @@ public class IsisScrape {
 
 	    this.page = starLink.click();
 
-	    System.out.println("In " + mname + " page after click = " + this.page);
-	    System.out.println("In " + mname + " page after click = " + this.page.asXml());
-
+	    if (debug) {
+		System.out.println("In " + mname + " page after click = " + this.page);
+		System.out.println("In " + mname + " page after click = " + this.page.asXml());
+	    }
 	    clickHiddenSubmit();
 
 	} catch (FailingHttpStatusCodeException e) {
@@ -206,9 +210,61 @@ public class IsisScrape {
 	    theElement = (HtmlElement) this.page.getElementById("ContentPlaceHolder1_ButtonContinue");               
 	    this.page = theElement.click();
 
-	    System.out.println("In " + mname + " page after click = " + this.page);
-	    System.out.println("In " + mname + " page after click = " + this.page.asXml());
+	    if (debug) {
+		System.out.println("In " + mname + " page after click = " + this.page);
+		System.out.println("In " + mname + " page after click = " + this.page.asXml());
+	    }
 
+	} catch (FailingHttpStatusCodeException e) {
+	    System.out.println("FailingHttpStatusCodeException during " + mname + " " + e.getMessage());
+	} catch (MalformedURLException e) {
+	    System.out.println("MalformedURLException during " + mname + " " + e.getMessage());
+	} catch (IOException e) {
+	    System.out.println("IOException during "  + mname + " "+ e.getMessage());
+	} catch (Exception e) {
+	    System.out.println("Exception during "  + mname + " "+ e.getMessage());
+	}
+	
+	System.out.println("Leaving " + mname);
+    }
+
+
+    /** click input button of type submit, with given value 
+
+	@param value value of the value="..." attribute
+    */
+
+    public void clickSubmit(String value) {
+
+	String mname = TraceHelper.getMethodName(0);
+	System.out.println("Entering " + mname);
+	
+	HtmlElement sb = null;
+	try{ 
+
+	    DomNodeList<DomElement> nodeList = this.page.getElementsByTagName("input");
+
+	    for ( DomElement de: nodeList) {
+		if (value.equals(de.getAttribute("value"))) {
+		    sb = (HtmlElement) de;
+		    break;			    
+		}
+	    }
+		     
+	    String type = sb.getAttribute("type");
+
+	    if ( type==null || !type.equals("submit")) { 
+		System.out.println("Element with value " + value + " was not of type submit");
+		System.exit(20);
+	    } 
+
+	    System.out.println("Clicking submit button with value=" + value);
+	    this.page = sb.click();
+
+	    if (debug) {
+		System.out.println("In " + mname + " page after click = " + this.page);
+		System.out.println("In " + mname + " page after click = " + this.page.asXml());
+	    }
 
 	} catch (FailingHttpStatusCodeException e) {
 	    System.out.println("FailingHttpStatusCodeException during " + mname + " " + e.getMessage());
@@ -249,10 +305,11 @@ public class IsisScrape {
 	    theElement = (HtmlElement) this.page.getElementById("ContentPlaceHolder1_ButtonSelect");               
 	    this.page = theElement.click();
 
-	    System.out.println("In " + mname + " page after click = " + this.page);
-	    System.out.println("In " + mname + " page after click = " + this.page.asXml());
-
-
+	    if (debug) {
+		System.out.println("In " + mname + " page after click = " + this.page);
+		System.out.println("In " + mname + " page after click = " + this.page.asXml());
+	    }
+	    
 	} catch (FailingHttpStatusCodeException e) {
 	    System.out.println("FailingHttpStatusCodeException during " + mname + " " + e.getMessage());
 	} catch (MalformedURLException e) {
@@ -266,6 +323,278 @@ public class IsisScrape {
 	System.out.println("Leaving " + mname);
 	
     }
+
+    /**
+       Enter data
+
+       @param idOfTextInput  id of the input element with type text
+       @param valueOfTextInput value of the value attribute for text input 
+    */
+    
+    public void enterData(String idOfTextInput, String valueOfTextInput) {
+
+	String mname = TraceHelper.getMethodName(0);
+	System.out.println("Entering " + mname);
+	
+	System.out.println("  idOfTextInput=" + idOfTextInput + " valueOfTextInput=" + valueOfTextInput);
+
+	HtmlInput selectElement = null;
+	
+	selectElement = (HtmlInput) this.page.getElementById(idOfTextInput);
+	selectElement.setValueAttribute(valueOfTextInput);
+
+	System.out.println("Leaving " + mname);
+    }
+
+
+    /**
+       <p>Enter data in the input element that is in the same enclosing &lt;tr&gt; element with 
+       an element containing exactly this text content (i.e. a label).</p>
+       
+       <p>There should be only one such input element; otherwise an error
+       will occur.</p>
+       
+
+       @param content The text label to look for 
+       @param value value of the text to enter 
+    */
+    
+    public void enterDataAfterLabel(String content,  String value) {
+
+	String mname = TraceHelper.getMethodName(0);
+	System.out.println("Entering " + mname);
+	
+
+	java.util.Iterator<HtmlElement> iterable = this.page.getHtmlElementDescendants().iterator();
+
+	boolean found=false;
+	HtmlElement elem=null;
+	while (iterable.hasNext()) {
+	    elem = iterable.next();
+
+	    if (elem.getTextContent().equals(content)) {
+		found  = true;
+		break;
+	    }
+	    
+	}
+
+	if (!found) {
+	    System.out.println("Could not find element with text content: " + content);
+	    System.exit(10);
+	}
+
+	System.out.println("Found element with text content: " + content);
+
+	HtmlElement enclosingTr = elem.getEnclosingElement("tr");
+
+	if (enclosingTr ==null) {
+	    System.out.println("Could not find enclosing td for element with text content: " + content);
+	    System.exit(11);	    
+	}
+
+	List<HtmlElement> listOfInputElements = enclosingTr.getHtmlElementsByTagName("input");
+
+	if (listOfInputElements.size() != 1) {
+	    System.out.println("Found more than one possible match for input element to go with: " + content);
+	    System.exit(12);	    
+	}
+
+	HtmlInput inputElem = (HtmlInput) listOfInputElements.get(0);
+
+	inputElem.setValueAttribute(value);
+	System.out.println("Set input field next to: " + content + " to value: " + value);
+
+	System.out.println("Leaving " + mname);
+    }
+
+
+    /**
+       fill series of fields with ids that have numeric suffixes _1, _2, etc.
+
+       @param start first index (e.g. 0 or 1), typically 1
+       @param id prefix, including _ if appropriate.
+       @param values array of string values to fill in
+    */
+    
+    public void fillSeriesOfFields(int start, String id, String [] values) {
+
+	String mname = TraceHelper.getMethodName(0);
+	System.out.println("Entering " + mname);
+	
+	System.out.println("  start=" + start + " id=" + id + " values=" + toString(values));
+
+	int i=start;
+	for (String s: values) {
+	    HtmlInput selectElement = null;
+
+	    selectElement = (HtmlInput) this.page.getElementById(id+i);
+	    selectElement.setValueAttribute(s);
+
+	    i++;
+	}
+	System.out.println("Leaving " + mname);
+    }
+
+
+    /**
+       clickSubmit
+
+       @param idOfSubmitButton  id of the input element with type submit
+       @param valueOfSubmitButtont  value of the value attribute of submit button
+    */
+    
+    public void clickSubmit(String idOfSubmitButton, String valueOfSubmitButton) {
+
+	String mname = TraceHelper.getMethodName(0);
+	System.out.println("Entering " + mname);
+
+	try{ 
+
+	    HtmlElement submitButton = getElemWithIdTypeAndValue(idOfSubmitButton,"submit",valueOfSubmitButton);
+
+	    System.out.println("Clicking id=" + idOfSubmitButton + " with value=" + valueOfSubmitButton);
+
+	    this.page = submitButton.click();
+
+	    if (debug) {
+		System.out.println("In " + mname + " page after click = " + this.page);
+		System.out.println("In " + mname + " page after click = " + this.page.asXml());
+	    }
+	    
+	} catch (FailingHttpStatusCodeException e) {
+	    System.out.println("FailingHttpStatusCodeException during " + mname + " " + e.getMessage());
+	} catch (MalformedURLException e) {
+	    System.out.println("MalformedURLException during " + mname + " " + e.getMessage());
+	} catch (IOException e) {
+	    System.out.println("IOException during "  + mname + " "+ e.getMessage());
+	} catch (Exception e) {
+	    System.out.println("Exception during "  + mname + " "+ e.getMessage());
+	}
+	
+	System.out.println("Leaving " + mname);
+	
+    }
+
+    /** 
+	check current page for element with this id, and return its text contents 
+
+	@param id of the element to look for
+	@return text contents, or null if element not found
+    */
+
+    public String getTextContentById(String id) {
+	
+	HtmlElement elem = (HtmlElement) this.page.getElementById(id);
+	
+	if (elem==null)
+	    return null;
+
+	return elem.getTextContent();
+    }
+
+
+    /** 
+	check current page for element with this id, and return one of its attribute values
+
+	@param id of the element to look for
+	@param attr attribute to return
+	@return text contents, or null if element not found
+    */
+
+    public String getAttributeById(String id, String attr) {
+	
+	HtmlElement elem = (HtmlElement) this.page.getElementById(id);
+	
+	if (elem==null)
+	    return null;
+
+	return elem.getAttribute(attr);
+    }
+
+    /** 
+	check current page for element with this id, and make sure its
+	contents are as shown.  If not, exit program
+
+	@param id of the element to look for
+	@param content what it should contain
+    */
+
+    public void assertElemContains(String id, String content) {
+	
+	String actualContent = getTextContentById(id);
+	
+	if (actualContent==null) {
+	    System.out.println("Element with id=" + id + " not found");
+	    System.exit(1);
+	}
+	    
+	if (!actualContent.equals(content)) {	    
+	    System.out.println("Element with id=" + id + " does not equal " + content );
+	    System.out.println("Element with id=" + id + " instead equals " + actualContent );
+	    System.exit(2);
+	}
+
+	System.out.println("Element with id=" + id + " equals " + content );
+	
+    }
+
+    /** 
+	Get element with this id, type and value.
+	If it doesn't, halts the program, so doubles an assertion.
+
+    */
+
+    public HtmlElement getElemWithIdTypeAndValue(String id, String type, String value) {
+
+	HtmlElement elem = (HtmlElement) this.page.getElementById(id);
+
+	if (elem == null) {
+	    System.out.println("Element with id=" + id + " not found.   Was looking for type=" + type + " value=" + value);
+	    System.exit(5);
+	}
+	
+	String actualType = elem.getAttribute("type");
+	String actualValue = elem.getAttribute("value");
+
+	if ( actualType==null || !actualType.equals(type)) { 
+	    System.out.println("Element with id=" + id + " did not have type " + type + ".  actualType=" + actualType + " Expected value=" + value);
+	    System.exit(6);
+	} 
+
+
+	if ( actualValue==null || !actualValue.equals(value)) { 
+	    System.out.println("Found submit button with id=" + id + "and type=" + type + " but value is not " + value);
+	    System.out.println("Value was: " + actualValue);
+	    System.exit(7);
+	} 
+
+	System.out.println("Element with id=" + id + " has type: " + actualType + " and value=" + actualValue);
+	return elem;
+    }
+
+    /** 
+	Just assert that this exists
+    */
+
+    public void  assertElemHasTypeAndValue(String id, String type, String value) {
+
+	HtmlElement elem = getElemWithIdTypeAndValue(id,type,value);
+    }
+
+    public static String toString(String [] strings) {
+	
+	String r="";
+	boolean first=true;
+	for (String s:strings) {
+	    r+= (first ? "{" : ",");
+	    first = false;
+	    r+= s;
+	}
+	r += "}";
+	return r;
+    }
+    
 
     /**A main function used for testing purposes when writing the methods
      * 
@@ -291,5 +620,51 @@ public class IsisScrape {
 	test.clickCONTINUE();
 
 	test.mainMenu("R","");
+
+	test.assertElemContains("ContentPlaceHolder1_Fldlit1","*** UCSB STUDENT ACCESS ***");
+
+	test.assertElemContains("ContentPlaceHolder1_Fldlit2","REPORTS MENU");
+
+	test.clickSubmit("ContentPlaceHolder1_ButtonEnter","Select Report/Next Page(ENTER)");
+
+
+
+	test.assertElemHasTypeAndValue("ContentPlaceHolder1_PG_1_DDesc_2_PR_12","text","Student Extract");
+
+	test.enterData("ContentPlaceHolder1_RptMapSelect","25");
+
+	test.clickSubmit("ContentPlaceHolder1_ButtonEnter","Select Report/Next Page(ENTER)");
+
+	test.assertElemContains("ContentPlaceHolder1_Fldlit2","STUDENT EXTRACT - JOB SUBMISSION");
+
+	test.fillSeriesOfFields(1,"ContentPlaceHolder1_MapMajor_",new String [] {"CMPSC","PRCMP","CPSCI","PRCPS","CMPCS","CMPEN","PRCME","CRTST"} );
+
+	test.enterDataAfterLabel("Expanded Extract:","Y");
+
+	test.enterDataAfterLabel("Level:","U");
+
+	test.enterDataAfterLabel("Data Source:","EOT");
+
+	String [] quarters = {"F10","F11","F12","F13"};
+
+	for (String qtr: quarters) {
+
+	    test.enterDataAfterLabel("Quarter:",qtr);
+	    
+	    test.enterDataAfterLabel("Send file to:","pconrad+eot-" + qtr + "@cs.ucsb.edu");
+
+	    test.clickSubmit("Submit(ENTER)");
+
+	    System.out.println("Message: " + test.getAttributeById("ContentPlaceHolder1_RjeSubmitted","value"));	    
+
+	    try {
+		Thread.sleep(5000);
+	    } catch (Exception e) {
+
+	    }
+	}
+
+
+
     }	
 }
