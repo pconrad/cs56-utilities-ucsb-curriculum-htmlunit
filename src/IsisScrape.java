@@ -645,20 +645,20 @@ public class IsisScrape {
 
 	test.enterDataAfterLabel("Data Source:","EOT");
 
-	String [] quarters = {"F10","F11","F12","F13"};
+	String [] quarters = {"F94","F95","F96","F97","F98","F99","F00","F01","F02","F03","F04","F05","F06","F07","F08","F09"};
 
 	for (String qtr: quarters) {
 
 	    test.enterDataAfterLabel("Quarter:",qtr);
 	    
-	    test.enterDataAfterLabel("Send file to:","pconrad+eot-" + qtr + "@cs.ucsb.edu");
+	    test.enterDataAfterLabel("Send file to:","pconrad+eot-y-" + qtr + "@cs.ucsb.edu");
 
 	    test.clickSubmit("Submit(ENTER)");
 
 	    System.out.println("Message: " + test.getAttributeById("ContentPlaceHolder1_RjeSubmitted","value"));	    
 
 	    try {
-		Thread.sleep(5000);
+		Thread.sleep(120000);
 	    } catch (Exception e) {
 
 	    }
